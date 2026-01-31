@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="">
-
-    </section>
+    @livewire('generation')
 @endsection

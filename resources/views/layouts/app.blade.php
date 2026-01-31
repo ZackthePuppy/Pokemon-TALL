@@ -25,13 +25,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
-@yield('header', View::make('layouts.header'))
 
-<body>
-    <main>
+<body class="min-h-screen flex flex-col">
+    @yield('header', View::make('layouts.header'))
+    <main class="flex-1">
         @yield('content')
     </main>
+    @yield('footer', View::make('layouts.footer'))
 </body>
-@yield('footer', View::make('layouts.footer'))
 
 </html>
