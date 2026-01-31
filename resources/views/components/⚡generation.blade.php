@@ -10,8 +10,27 @@ new class extends Component
     {
         $response = Http::get("https://pokeapi.co/api/v2/generation/{$value}");
         
+        // if ($response->successful()) {
+        //     $this->pokemons = $response->json()['pokemon_species'] ?? [];
+
+        //     $spriteresponse = Http::get("https://pokeapi.co/api/v2/pokemon/{$this->pokemons[0]["name"]}")->json();
+
+        //     // dd($spriteresponse['sprites']['front_default']);
+        // }
         if ($response->successful()) {
-            $this->pokemons = $response->json()['pokemon_species'] ?? [];
+            $speciesList = $response->json()['pokemon_species'] ?? [];
+
+            // Add sprite to each Pokémon
+            $this->pokemons = collect($speciesList)->map(function ($pokemon) {
+                $spriteResponse = Http::get("https://pokeapi.co/api/v2/pokemon/{$pokemon['name']}");
+
+                $sprite = $spriteResponse->successful()
+                    ? $spriteResponse->json()['sprites']['front_default']
+                    : null;
+
+                // Merge sprite into the existing $pokemon array
+                return [...$pokemon, 'sprite' => $sprite];
+            })->toArray();
         }
     }
 };
@@ -37,7 +56,10 @@ new class extends Component
     <div wire:loading.remove class="grid grid-cols-2 md:grid-cols-4 gap-4">
         @forelse($pokemons as $pokemon)
         <div class="p-4 bg-gray-100 rounded shadow text-center">
-            {{ $pokemon['name'] }}
+            <img src="{{ $pokemon['sprite'] }}" class="mx-auto" alt="">
+            <p>
+                {{ $pokemon['name'] }}
+            </p>
         </div>
         @empty
         <div class="col-span-full text-gray-400 text-xl">No generation loaded yet.</div>
