@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Component;
+use App\Helpers\PokeApi;
 
 new class extends Component
 {
@@ -31,18 +32,16 @@ new class extends Component
         
     public function getGeneration($value)
     {
-        $response = Http::get("https://pokeapi.co/api/v2/generation/{$value}");
-        if ($response->successful()) {
-            $this->pokemons = $response->json()['pokemon_species'] ?? [];
-            $this->tip = true;
-        }
+        $api = new PokeApi();
+        $result = $api->gameGeneration($value);
+        $this->pokemons = $result['pokemon_species'];
+        $this->tip = true;
     }
 
     public function viewPokemonDetails($value){
-        $response = Http::get("https://pokeapi.co/api/v2/pokemon/{$value}");
-        if ($response->successful()) {
-            $this->pokemonDetails = $response->json();
-        }
+        $api = new PokeApi();
+        $result = $api->pokemon($value);
+        $this->pokemonDetails = $result;
     }
 };
 ?>
